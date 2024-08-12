@@ -26,6 +26,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _isPasswordHidden = true;
+  bool _isConfirmPasswordHidden = true;
 
   Future<void> _register(BuildContext context) async {
     String username = _usernameController.text;
@@ -42,7 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       try {
         final response = await http.post(
-          Uri.parse('http://localhost/api/register.php'),
+          Uri.parse('http://localhost/api/demo/register.php'),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded', // Set header Content-Type
           },
@@ -91,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text('Register'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF2B8249)),
           onPressed: () {
             Navigator.push(
               context,
@@ -99,30 +103,27 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           },
         ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/your_illustration.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
+            color: Colors.white,
           ),
           Positioned.fill(
             child: Container(
-              color: Colors.white.withOpacity(0.5),
+              color: Color(0xFF2B8249).withOpacity(0.5),
             ),
           ),
           Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.40,
+              height: MediaQuery.of(context).size.height * 0.55,
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Color(0xFF2B8249),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -139,43 +140,114 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextField(
                         controller: _usernameController,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
                           labelText: 'Username',
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: Icon(Icons.person,
+                              color: const Color(0xFF2B8249).withOpacity(0.7)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                       SizedBox(height: 12.0),
                       TextField(
                         controller: _emailController,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
                           labelText: 'Email',
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(Icons.email,
+                              color: const Color(0xFF2B8249).withOpacity(0.7)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                       SizedBox(height: 12.0),
                       TextField(
                         controller: _passwordController,
+                        obscureText: _isPasswordHidden,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
                           labelText: 'Password',
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock,
+                              color: const Color(0xFF2B8249).withOpacity(0.7)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordHidden
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xFF2B8249).withOpacity(0.7),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordHidden = !_isPasswordHidden;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
-                        obscureText: true,
+                      ),
+                      SizedBox(height: 12.0),
+                      TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: _isConfirmPasswordHidden,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          labelText: 'Confirm Password',
+                          prefixIcon: Icon(Icons.lock,
+                              color: const Color(0xFF2B8249).withOpacity(0.7)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordHidden
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xFF2B8249).withOpacity(0.7),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordHidden =
+                                    !_isConfirmPasswordHidden;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 24.0),
                       ElevatedButton(
                         onPressed: () {
-                          _register(context);
+                          if (_passwordController.text ==
+                              _confirmPasswordController.text) {
+                            _register(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Passwords do not match')),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: const Color(0xFF00BFF3),
+                          foregroundColor: const Color(0xFF1C5734),
                           backgroundColor: const Color(0xFFFFFFFF),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           elevation: 5.0,
-                          shadowColor: const Color(0xFF2E2B14),
+                          shadowColor: const Color(0xFF1C5734),
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                         ),
-                        child: const Text('Register'),
+                        child: const Text('Daftar'),
                       ),
                     ],
                   ),

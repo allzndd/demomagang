@@ -44,6 +44,11 @@ class LoginPageState extends State<LoginPage> {
       TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _isPasswordHidden = true;
+  bool _showErrorUsername = false;
+  bool _showErrorPassword = false;
+
+
   Future<void> _login(BuildContext context) async {
     String usernameOrEmail = _usernameOrEmailController.text;
     String password = _passwordController.text;
@@ -58,7 +63,7 @@ class LoginPageState extends State<LoginPage> {
     } else {
       try {
         final response = await http.post(
-          Uri.parse('http://localhost/api/login.php'),
+          Uri.parse('http://localhost/api/demo/login.php'),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
@@ -121,148 +126,180 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            color: Colors.white,
+  return Scaffold(
+    body: Stack(
+      children: [
+        Container(
+          color: Colors.white,
+        ),
+        Positioned.fill(
+          child: Container(
+            color: Color(0xFF2B8249).withOpacity(0.5),
           ),
-          Positioned.fill(
-            child: Container(
-              color: Color(0xFF2B8249).withOpacity(
-                  0.5), // Mengubah background overlay menjadi hijau tua dengan transparansi
-            ),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/logo.png',
-                    width: MediaQuery.of(context).size.width *
-                        0.4, // Sesuaikan ukuran logo
-                    height: MediaQuery.of(context).size.height * 0.2,
-                  ),
-                  const SizedBox(height: 20), // Jarak antara logo dan form
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.height * 0.42,
-                    child: Form(
-                      key: _formKey,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Color(
-                              0xFF2B8249), // Warna hijau tua untuk container child
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
+        ),
+        Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'logo.png',
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.2,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF2B8249),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextFormField(
+                            controller: _usernameOrEmailController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              labelText: 'Username or Email',
+                              prefixIcon: Icon(Icons.person,
+                                  color: const Color(0xFF2B8249)
+                                      .withOpacity(0.7)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: _usernameOrEmailController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors
-                                    .white, // Background putih untuk TextField
-                                labelText: 'Username or Email',
-                                prefixIcon: Icon(Icons.person,
-                                    color: const Color(0xFF2B8249)
-                                        .withOpacity(0.7)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide.none,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            },
+                          ),
+                          if (_showErrorUsername)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Text(
+                                'Please enter your username or email',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
                                 ),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your username or email';
-                                }
-                                return null;
-                              },
                             ),
-                            const SizedBox(height: 12.0),
-                            TextFormField(
-                              controller: _passwordController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors
-                                    .white, // Background putih untuk TextField
-                                labelText: 'Password',
-                                prefixIcon: Icon(Icons.lock,
-                                    color: const Color(0xFF2B8249)
-                                        .withOpacity(0.7)),
-                                // obscureText: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide.none,
+                          const SizedBox(height: 18.0),
+                          TextFormField(
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              labelText: 'Password',
+                              prefixIcon: Icon(Icons.lock,
+                                  color: const Color(0xFF2B8249)
+                                      .withOpacity(0.7)),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordHidden
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: const Color(0xFF2B8249)
+                                      .withOpacity(0.7),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordHidden = !_isPasswordHidden;
+                                  });
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            obscureText: _isPasswordHidden,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            },
+                          ),
+                          if (_showErrorPassword)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Text(
+                                'Please enter your password',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
                                 ),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-                                return null;
-                              },
                             ),
-                            const SizedBox(height: 24.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
+                          const SizedBox(height: 24.0),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _showErrorUsername = _usernameOrEmailController.text.isEmpty;
+                                  _showErrorPassword = _passwordController.text.isEmpty;
+                                });
+
+                                if (!_showErrorUsername && !_showErrorPassword) {
                                   _login(context);
                                 }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: const Color(
-                                    0xFF1C5734), // Warna teks lebih gelap
-                                backgroundColor:
-                                    const Color(0xFFFFFFFF), // Background putih
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                elevation: 5.0,
-                                shadowColor: const Color(
-                                    0xFF1C5734), // Shadow berwarna hijau tua
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16.0),
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: const Color(0xFF1C5734),
+                              backgroundColor: const Color(0xFFFFFFFF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                              child: const Text('Login'),
+                              elevation: 5.0,
+                              shadowColor: const Color(0xFF1C5734),
+                              padding: const EdgeInsets.symmetric(vertical: 16.0),
                             ),
-                            const SizedBox(height: 12.0),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RegisterPage()),
-                                );
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: const Color(
-                                    0xFF1C5734), // Warna teks lebih gelap
-                              ),
-                              child: const Text('Register'),
+                            child: const Text('Masuk'),
+                          ),
+                          const SizedBox(height: 12.0),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterPage()),
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFF1C5734),
                             ),
-                          ],
-                        ),
+                            child: const Text('Belum Punya Akun?'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

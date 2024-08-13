@@ -17,38 +17,130 @@ class _ItemListPageState extends State<ItemListPage> {
     _fetchItems();
   }
 
-  void _fetchItems() async {
-  try {
-    final response = await http.get(Uri.parse(apiUrl));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        _items.clear();
-        _items.addAll(data.map((item) => item as Map<String, dynamic>).toList());
-      });
+  Future<void> _fetchItems() async {
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _items.clear();
+          _items.addAll(data.map((item) => item as Map<String, dynamic>).toList());
+        });
+      }
+    } catch (e) {
+      print("Error fetching items: $e");
     }
-  } catch (e) {
-    print("Error fetching items: $e");
-  }
-}
-
-
-  void _addItem(Map<String, dynamic> newItem) {
-    setState(() {
-      _items.add(newItem);
-    });
   }
 
-  void _deleteItem(int index) {
-    setState(() {
-      _items.removeAt(index);
-    });
+  Future<void> _addItem(Map<String, dynamic> newItem) async {
+    try {
+      final response = await http.post(
+        Uri.parse("http://localhost/api/demo/create_barang.php"),
+        body: newItem,
+      );
+      final result = json.decode(response.body);
+      if (result['status'] == 'success') {
+        _fetchItems();
+      }
+    } catch (e) {
+      print("Error adding item: $e");
+    }
   }
 
-  void _editItem(int index, Map<String, dynamic> updatedItem) {
-    setState(() {
-      _items[index] = updatedItem;
-    });
+  Future<void> _updateItem(Map<String, dynamic> updatedItem) async {
+    try {
+      final response = await http.post(
+        Uri.parse("http://localhost/api/demo/update_barang.php"),
+        body: updatedItem,
+      );
+      final result = json.decode(response.body);
+      if (result['status'] == 'success') {
+        _fetchItems();
+      }
+    } catch (e) {
+      print("Error updating item: $e");
+    }
+  }
+
+  Future<void> _deleteItem(int id) async {
+    try {
+      final response = await http.post(
+        Uri.parse("http://localhost/api/demo/delete_barang.php"),
+        body: {'id': id.toString()},
+      );
+      final result = json.decode(response.body);
+      if (result['status'] == 'success') {
+        _fetchItems();
+      }
+    } catch (e) {
+      print("Error deleting item: $e");
+    }
+  }
+
+  void _showForm({Map<String, dynamic>? item}) {
+    final isEdit = item != null;
+    final namaBarangController = TextEditingController(text: isEdit ? item!['nama_barang'] : '');
+    final stokController = TextEditingController(text: isEdit ? item!['stok'].toString() : '');
+    final hargaController = TextEditingController(text: isEdit ? item!['harga'].toString() : '');
+    final gambarBarangController = TextEditingController(text: isEdit ? item!['gambar_barang'] : '');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(isEdit ? 'Edit Item' : 'Add Item'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: namaBarangController,
+                decoration: InputDecoration(labelText: 'Nama Barang'),
+              ),
+              TextField(
+                controller: stokController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Stok'),
+              ),
+              TextField(
+                controller: hargaController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Harga'),
+              ),
+              TextField(
+                controller: gambarBarangController,
+                decoration: InputDecoration(labelText: 'Gambar Barang'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final newItem = {
+                  'id': isEdit ? item!['id'].toString() : '',
+                  'nama_barang': namaBarangController.text,
+                  'stok': stokController.text,
+                  'harga': hargaController.text,
+                  'gambar_barang': gambarBarangController.text,
+                };
+                if (isEdit) {
+                  _updateItem(newItem);
+                } else {
+                  _addItem(newItem);
+                }
+                Navigator.pop(context);
+              },
+              child: Text(isEdit ? 'Update' : 'Add'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -65,7 +157,7 @@ class _ItemListPageState extends State<ItemListPage> {
           return Card(
             margin: EdgeInsets.all(8.0),
             child: ListTile(
-              leading: Image.asset('assets/${item['gambar_barang']}'), // Display item image
+              leading: Image.asset('${item['gambar_barang']}'), // Display item image
               title: Text(item['nama_barang']),
               subtitle: Text('Stok: ${item['stok']} Kg\nHarga: ${item['harga']}'),
               trailing: Row(
@@ -74,14 +166,13 @@ class _ItemListPageState extends State<ItemListPage> {
                   IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
-                      // Edit item
-                      _editItem(index, item);
+                      _showForm(item: item);
                     },
                   ),
                   IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      _deleteItem(index);
+                      _deleteItem(item['id']);
                     },
                   ),
                 ],
@@ -93,13 +184,7 @@ class _ItemListPageState extends State<ItemListPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFF2B8249),
         onPressed: () {
-          // Add new item
-          _addItem({
-            'nama_barang': 'New Item',
-            'stok': 0,
-            'harga': 0.0,
-            'gambar_barang': 'default.png',
-          });
+          _showForm();
         },
         child: Icon(Icons.add),
       ),

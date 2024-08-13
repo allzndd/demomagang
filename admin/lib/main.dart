@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/barang',
+      initialRoute: '/dashboard',
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/barang': (context) => ItemListPage(),
-        // '/dashboard' : (context) => DashboardPage(),
+        '/dashboard' : (context) => DashboardPage(),
         // '/history' : (context) => HistoryPage(),
         // '/report' : (context) => ReportPage(),
         // '/profil' : (context) => ProfilePage(),

@@ -1,6 +1,8 @@
+import 'package:admin/daftarbarang.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
+import 'daftarbarang.dart';
 import 'dashboardpage.dart';
 // import 'history_page.dart';
 // import 'report_page.dart';
@@ -19,10 +21,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/login',
+      initialRoute: '/barang',
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
+        '/barang': (context) => ItemListPage(),
         // '/dashboard' : (context) => DashboardPage(),
         // '/history' : (context) => HistoryPage(),
         // '/report' : (context) => ReportPage(),

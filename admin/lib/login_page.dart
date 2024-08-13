@@ -98,10 +98,10 @@ class LoginPageState extends State<LoginPage> {
             print('Username yang disimpan: ${responseData['username']}');
             print('Surel yang disimpan: ${responseData['surel']}');
 
-            // Navigator.push(
-            //   // context,
-            //   // MaterialPageRoute(builder: (context) => DashboardPage()),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DashboardPage()),
+            );
           } else {
             throw Exception('User data is incomplete');
           }

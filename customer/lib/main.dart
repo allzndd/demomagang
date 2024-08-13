@@ -19,11 +19,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/login',
+      initialRoute: '/dashboard',
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        // '/dashboard' : (context) => DashboardPage(),
+        '/dashboard' : (context) => DashboardPage(),
         // '/history' : (context) => HistoryPage(),
         // '/report' : (context) => ReportPage(),
         // '/profil' : (context) => ProfilePage(),

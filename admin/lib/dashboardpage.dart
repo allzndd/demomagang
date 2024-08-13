@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart'; // Pastikan paket ini ditambahkan di pubspec.yaml
+import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -24,24 +24,27 @@ class _DashboardPageState extends State<DashboardPage> {
       // Fetch user count
       final userResponse = await http.get(Uri.parse('http://localhost/api/demo/user_count.php'));
       if (userResponse.statusCode == 200) {
+        var userJson = json.decode(userResponse.body);
         setState(() {
-          totalUsers = json.decode(userResponse.body)['user_count'];
+          totalUsers = userJson['user_count'] as int; // Pastikan parsing sebagai int
         });
       }
 
       // Fetch sales data
       final salesResponse = await http.get(Uri.parse('http://localhost/api/demo/sales_data.php'));
       if (salesResponse.statusCode == 200) {
+        var salesJson = json.decode(salesResponse.body);
         setState(() {
-          salesData = List<double>.from(json.decode(salesResponse.body)['sales']);
+          salesData = List<double>.from(salesJson['sales']); // Pastikan parsing sebagai double
         });
       }
 
       // Fetch stock data
       final stockResponse = await http.get(Uri.parse('http://localhost/api/demo/stock_data.php'));
       if (stockResponse.statusCode == 200) {
+        var stockJson = json.decode(stockResponse.body);
         setState(() {
-          stockData = List<Map<String, dynamic>>.from(json.decode(stockResponse.body)['stock']);
+          stockData = List<Map<String, dynamic>>.from(stockJson['stock']); // Pastikan parsing ke List<Map>
         });
       }
     } catch (e) {
@@ -54,9 +57,9 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
-        backgroundColor: Color(0xFF2B8249), // Warna top bar
+        backgroundColor: Color(0xFF2B8249),
       ),
-      body: SingleChildScrollView( // Menambahkan scroll untuk menghindari overflow
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -189,8 +192,9 @@ class _DashboardPageState extends State<DashboardPage> {
                             x: stock['id_barang'],
                             barRods: [
                               BarChartRodData(
-                                y: (stock['stok'] as num).toDouble(),
-                                colors: [Color(0xFF007250)],
+                                y: (stock['stok'] as int).toDouble(),
+                                colors: [Color(0xFF2B8249)],
+                                width: 16,
                               ),
                             ],
                           );

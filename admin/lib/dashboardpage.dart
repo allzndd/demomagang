@@ -142,7 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
             SizedBox(height: 8.0),
             Text(
               '$totalUsers',
-              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color(0xFF2B8249)),
+              style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black),
             ),
           ],
         ),
@@ -178,7 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               return FlSpot(idx.toDouble(), sales);
                             }).toList(),
                             isCurved: true,
-                            colors: [Color(0xFF2B8249)],
+                            colors: [Colors.black],
                             barWidth: 4,
                             isStrokeCapRound: true,
                             belowBarData: BarAreaData(show: true, colors: [
@@ -222,7 +222,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             barRods: [
                               BarChartRodData(
                                 y: (stock['stok'] as int).toDouble(),
-                                colors: [Color(0xFF2B8249)],
+                                colors: [Colors.black],
                                 width: 16,
                               ),
                             ],

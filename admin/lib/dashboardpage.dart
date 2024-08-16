@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
 import 'profil_page.dart';
 import 'login_page.dart';
+import 'adminpesananpage.dart'; // Import halaman AdminPesananPage
 import 'dart:convert';
 
 class DashboardPage extends StatefulWidget {
@@ -61,46 +62,44 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Text('Dashboard'),
         backgroundColor: Color(0xFF2B8249),
         actions: [
-        PopupMenuButton(
-          icon: Icon(Icons.exit_to_app, color: Color(0xFFFFFFFF)),
-          onSelected: (value) {
-            if (value == 'akun_saya') {
+          IconButton(
+            icon: Icon(Icons.list_alt, color: Colors.white), // Ikon untuk halaman AdminPesanan
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
+                MaterialPageRoute(builder: (context) => AdminPesananPage()),
               );
-            } else if (value == 'logout') {
-              _showLogoutDialog(context);
-            }
-          },
-          itemBuilder: (BuildContext context) => [
-            // PopupMenuItem(
-            //   value: 'akun_saya',
-            //   child: Text('Akun Saya'),
-            // ),
-            PopupMenuItem(
-              value: 'logout',
-              child: Text('Logout'),
-            ),
-          ],
-        ),
-      ],
+            },
+          ),
+          PopupMenuButton(
+            icon: Icon(Icons.exit_to_app, color: Color(0xFFFFFFFF)),
+            onSelected: (value) {
+              if (value == 'akun_saya') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+              } else if (value == 'logout') {
+                _showLogoutDialog(context);
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: 'logout',
+                child: Text('Logout'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // User Count
             _buildUserCountCard(),
-
             SizedBox(height: 16.0),
-
-            // Sales Graph
             _buildSalesChart(),
-
             SizedBox(height: 16.0),
-
-            // Stock Diagram
             _buildStockDiagram(),
           ],
         ),
@@ -112,23 +111,17 @@ class _DashboardPageState extends State<DashboardPage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.inventory), // Ganti ikon untuk menggambarkan daftar barang
+            icon: Icon(Icons.inventory), // Ikon untuk menggambarkan daftar barang
             label: 'Daftar Barang',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.settings),
-          //   label: 'Settings',
-          // ),
         ],
         selectedItemColor: Color(0xFF007250),
         unselectedItemColor: Color(0xFF88C14F),
         onTap: (index) {
           if (index == 0) {
-            // Refresh halaman dashboard
-            _fetchDashboardData();
+            _fetchDashboardData(); // Refresh halaman dashboard
           } else if (index == 1) {
-            // Arahkan ke halaman ItemListPage
-            Navigator.pushNamed(context, '/barang');
+            Navigator.pushNamed(context, '/barang'); // Arahkan ke halaman ItemListPage
           }
         },
       ),
@@ -244,6 +237,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,

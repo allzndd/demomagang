@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import 'dashboardpage.dart';
+import 'screens/customer_dashboard.dart';
 // import 'history_page.dart';
 // import 'report_page.dart';
 // import 'profil_page.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/dashboard',
+      initialRoute: '/login',
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
